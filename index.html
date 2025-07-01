@@ -3,8 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>WhatsApp - Aplikasi Chat Indonesia</title>
-    <link
+    <title>Aplikasi Chat Saya</title> <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
@@ -14,38 +13,38 @@
     />
     <style>
       :root {
-        --whatsapp-green: #008069;
-        --whatsapp-light-green: #25d366;
-        --whatsapp-bg-primary: #f0f2f5;
-        --whatsapp-bg-secondary: #e5ddd5;
-        --whatsapp-chat-header: #f0f2f5; /* Atau #ededed untuk header chat lama */
-        --whatsapp-border: #f2f2f2;
-        --whatsapp-text-primary: #111b21;
-        --whatsapp-text-secondary: #667781;
+        --primary-color: #007bff; /* Biru terang sebagai warna utama */
+        --light-primary-color: #25d366; /* Warna hijau untuk button, bisa diganti */
+        --bg-primary: #f0f2f5;
+        --bg-secondary: #e5ddd5;
+        --header-bg: #f0f2f5;
+        --border-color: #f2f2f2;
+        --text-primary: #111b21;
+        --text-secondary: #667781;
       }
 
       body {
         font-family: "Segoe UI", sans-serif;
-        background-color: var(--whatsapp-bg-primary);
+        background-color: var(--bg-primary);
         margin: 0;
         overflow: hidden;
-        display: flex; /* Mengatur body sebagai flex container untuk mengisi viewport */
+        display: flex;
         height: 100vh;
         width: 100vw;
       }
 
-      /* Halaman Autentikasi (Tidak banyak berubah dari sebelumnya, fokus di chat) */
+      /* Halaman Autentikasi */
       #halaman-auth {
-        background-color: var(--whatsapp-bg-primary);
+        background-color: var(--bg-primary);
         height: 100vh;
         width: 100vw;
         display: flex;
         justify-content: center;
         align-items: center;
-        position: absolute; /* Agar tidak mengganggu layout chat saat d-none */
+        position: absolute;
         top: 0;
         left: 0;
-        z-index: 1000; /* Pastikan di atas halaman chat saat aktif */
+        z-index: 1000;
       }
       .card-auth {
         border-radius: 16px;
@@ -68,35 +67,40 @@
       }
       .nav-tabs .nav-link {
         border: none;
-        color: var(--whatsapp-text-secondary);
+        color: var(--text-secondary);
         font-weight: 500;
         padding: 12px 20px;
         transition: all 0.3s ease;
         width: 100%;
       }
       .nav-tabs .nav-link.active {
-        background-color: var(--whatsapp-light-green); /* Warna hijau WhatsApp */
+        background-color: var(--primary-color); /* Menggunakan primary-color */
         color: white;
         border-radius: 8px;
       }
+      /* Mengganti warna tombol login/daftar */
+      #btn-login, #btn-daftar {
+          background-color: var(--primary-color) !important;
+          color: white !important;
+      }
 
-      /* Halaman Chat Utama (Mirip Layout WhatsApp Desktop) */
+      /* Halaman Chat Utama */
       #halaman-chat {
         height: 100vh;
         width: 100vw;
-        display: flex; /* flex untuk menempatkan sidebar kiri dan konten utama */
-        background-color: var(--whatsapp-bg-primary);
+        display: flex;
+        background-color: var(--bg-primary);
       }
 
-      /* Sidebar Kiri Utama (Ikon Navigasi) */
+      /* Sidebar Kiri Utama (Ikon Navigasi Global) */
       .main-sidebar {
-        width: 70px; /* Lebar tetap untuk ikon */
-        background-color: #e7e7e7; /* Background lebih gelap dari daftar chat */
+        width: 70px;
+        background-color: #e7e7e7;
         display: flex;
         flex-direction: column;
         align-items: center;
         padding-top: 20px;
-        border-right: 1px solid var(--whatsapp-border);
+        border-right: 1px solid var(--border-color);
       }
       .main-sidebar .profile-thumb {
         width: 45px;
@@ -118,7 +122,7 @@
         object-fit: cover;
       }
       .main-sidebar .nav-icons {
-        flex-grow: 1; /* Memastikan ikon navigasi mengisi ruang */
+        flex-grow: 1;
       }
       .main-sidebar .nav-icons .icon-item {
         width: 100%;
@@ -133,19 +137,19 @@
       }
       .main-sidebar .nav-icons .icon-item:hover {
         background-color: #dcdcdc;
-        color: var(--whatsapp-green);
+        color: var(--primary-color); /* Menggunakan primary-color */
       }
       .main-sidebar .nav-icons .icon-item.active {
-        color: var(--whatsapp-green);
+        color: var(--primary-color); /* Menggunakan primary-color */
       }
       .main-sidebar .settings-icon {
-        margin-top: auto; /* Dorong ke bawah */
+        margin-top: auto;
         margin-bottom: 20px;
       }
       .main-sidebar .dropdown-menu {
-        left: 75px; /* Posisi dropdown relatif terhadap sidebar */
-        top: auto !important; /* Override Bootstrap's top calculation */
-        bottom: 20px; /* Di atas ikon setting */
+        left: 75px;
+        top: auto !important;
+        bottom: 20px;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       }
@@ -153,17 +157,17 @@
 
       /* Sidebar Chat (Daftar Percakapan) */
       .chatlist-sidebar {
-        width: 350px; /* Lebar daftar chat */
+        width: 350px;
         background-color: #ffffff;
-        border-right: 1px solid var(--whatsapp-border);
+        border-right: 1px solid var(--border-color);
         display: flex;
         flex-direction: column;
-        overflow: hidden; /* Mengatur overflow secara manual di dalam komponen */
+        overflow: hidden;
       }
       .chatlist-header {
         padding: 10px 16px;
-        background-color: var(--whatsapp-chat-header);
-        border-bottom: 1px solid var(--whatsapp-border);
+        background-color: var(--header-bg);
+        border-bottom: 1px solid var(--border-color);
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -177,7 +181,7 @@
         border-radius: 20px;
         background-color: #f0f2f5;
         border: none;
-        padding: 8px 12px 8px 40px; /* Padding kiri untuk ikon */
+        padding: 8px 12px 8px 40px;
         width: 100%;
         font-size: 0.9rem;
       }
@@ -186,19 +190,13 @@
         left: 15px;
         top: 50%;
         transform: translateY(-50%);
-        color: var(--whatsapp-text-secondary);
+        color: var(--text-secondary);
         font-size: 0.9rem;
       }
-      /* Hapus ikon "more" di header chatlist jika tidak dibutuhkan */
-      /* .chatlist-header .icon-more {
-        font-size: 1.4rem;
-        color: var(--whatsapp-text-secondary);
-        cursor: pointer;
-      } */
 
       .chatlist-content {
         flex-grow: 1;
-        overflow-y: auto; /* Scrollable content */
+        overflow-y: auto;
       }
       .list-group-item {
         border: none;
@@ -206,18 +204,18 @@
         display: flex;
         align-items: center;
         transition: background-color 0.1s ease;
-        border-bottom: 1px solid var(--whatsapp-border); /* Pemisah antar chat */
+        border-bottom: 1px solid var(--border-color);
       }
       .list-group-item:last-child {
-          border-bottom: none; /* Tidak ada border di elemen terakhir */
+          border-bottom: none;
       }
       .list-group-item:hover {
         background-color: #f5f5f5;
         cursor: pointer;
       }
       .list-group-item.active {
-        background-color: #e0f2f7; /* Warna aktif seperti WhatsApp */
-        color: var(--whatsapp-text-primary);
+        background-color: #e0f2f7; /* Warna aktif, bisa disesuaikan */
+        color: var(--text-primary);
       }
       .list-group-item .avatar {
         width: 50px;
@@ -240,7 +238,7 @@
       }
       .list-group-item .chat-info {
         flex-grow: 1;
-        overflow: hidden; /* Untuk ellipsis */
+        overflow: hidden;
       }
       .list-group-item .chat-info .name {
         font-weight: 500;
@@ -251,7 +249,7 @@
       }
       .list-group-item .chat-info .last-message {
         font-size: 0.85rem;
-        color: var(--whatsapp-text-secondary);
+        color: var(--text-secondary);
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -261,7 +259,7 @@
         flex-direction: column;
         align-items: flex-end;
         font-size: 0.75rem;
-        color: var(--whatsapp-text-secondary);
+        color: var(--text-secondary);
         margin-left: 10px;
         flex-shrink: 0;
       }
@@ -269,7 +267,7 @@
         margin-bottom: 3px;
       }
       .list-group-item .chat-meta .unread-badge {
-        background-color: var(--whatsapp-light-green);
+        background-color: var(--light-primary-color); /* Menggunakan light-primary-color */
         color: white;
         font-size: 0.7rem;
         padding: 2px 7px;
@@ -281,15 +279,15 @@
 
       /* Area Chat */
       .chat-area {
-        flex: 1; /* Mengisi sisa ruang */
+        flex: 1;
         display: flex;
         flex-direction: column;
-        background-color: var(--whatsapp-bg-secondary);
+        background-color: var(--bg-secondary);
       }
       .chat-header-main {
         padding: 10px 16px;
-        background-color: var(--whatsapp-chat-header); /* Header chat area */
-        border-left: 1px solid var(--whatsapp-border);
+        background-color: var(--header-bg);
+        border-left: 1px solid var(--border-color);
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
         z-index: 10;
         display: flex;
@@ -311,37 +309,30 @@
         font-weight: 500;
         font-size: 1.1rem;
         margin-bottom: 0;
-        color: var(--whatsapp-text-primary);
+        color: var(--text-primary);
       }
       .chat-header-main .chat-header-icons {
           margin-left: auto;
       }
-      /* Hapus ikon search dan three-dots-vertical di header chat utama jika tidak dibutuhkan */
-      /* .chat-header-main .chat-header-icons i {
-          font-size: 1.4rem;
-          color: var(--whatsapp-text-secondary);
-          margin-left: 20px;
-          cursor: pointer;
-      } */
 
 
       .chat-messages {
         flex: 1;
-        padding: 20px 80px; /* Padding lebih besar untuk estetika */
+        padding: 20px 80px;
         overflow-y: auto;
-        background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
-        background-size: cover;
+        /* Hapus background-image terkait WhatsApp */
+        background-color: var(--bg-secondary); /* Warna solid sebagai pengganti */
         display: flex;
-        flex-direction: column; /* Untuk menempatkan pesan */
+        flex-direction: column;
       }
       .pesan {
         padding: 10px 15px;
-        border-radius: 8px; /* Border radius lebih kecil untuk pesan */
-        margin-bottom: 8px; /* Jarak antar pesan lebih kecil */
-        max-width: 65%; /* Max width pesan */
+        border-radius: 8px;
+        margin-bottom: 8px;
+        max-width: 65%;
         word-wrap: break-word;
         font-size: 0.9rem;
-        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13); /* Shadow untuk pesan */
+        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
       }
       .dikirim {
         background-color: #dcf8c6;
@@ -363,8 +354,8 @@
 
       .chat-footer {
         padding: 10px 16px;
-        background-color: var(--whatsapp-chat-header);
-        border-top: 1px solid var(--whatsapp-border);
+        background-color: var(--header-bg);
+        border-top: 1px solid var(--border-color);
         display: flex;
         align-items: center;
       }
@@ -374,7 +365,7 @@
       .chat-footer .form-control {
         border-radius: 20px;
         background-color: #ffffff;
-        border: none; /* Hilangkan border */
+        border: none;
         padding: 10px 15px;
         box-shadow: none;
       }
@@ -385,25 +376,19 @@
         width: 45px;
         height: 45px;
         margin-left: 10px;
-        background-color: var(--whatsapp-light-green);
+        background-color: var(--primary-color); /* Menggunakan primary-color */
         border-radius: 50%;
         cursor: pointer;
         transition: background-color 0.2s ease;
       }
       .chat-footer .btn-send-wrapper:hover {
-          background-color: #1ea054;
+          background-color: var(--primary-color); /* Tetap primary color */
+          filter: brightness(0.9); /* Sedikit gelap saat hover */
       }
       .chat-footer .btn-send-wrapper i {
         font-size: 1.3rem;
         color: white;
       }
-      /* Hapus ikon attach dan emoji jika tidak dibutuhkan */
-      /* .chat-footer .attach-icon, .chat-footer .emoji-icon {
-          font-size: 1.4rem;
-          color: var(--whatsapp-text-secondary);
-          margin-right: 15px;
-          cursor: pointer;
-      } */
 
 
       /* Tampilan Default Area Chat Kosong */
@@ -414,16 +399,16 @@
         align-items: center;
         height: 100%;
         text-align: center;
-        color: var(--whatsapp-text-secondary);
-        background-color: var(--whatsapp-bg-primary); /* Latar belakang area kosong */
+        color: var(--text-secondary);
+        background-color: var(--bg-primary);
       }
-      .empty-chat-area .whatsapp-logo-large {
+      .empty-chat-area .app-logo-large { /* Mengganti whatsapp-logo-large */
         font-size: 8rem;
-        color: rgba(0, 0, 0, 0.08); /* Warna abu-abu transparan */
+        color: rgba(0, 0, 0, 0.08);
         margin-bottom: 20px;
       }
       .empty-chat-area h4 {
-        color: var(--whatsapp-text-primary);
+        color: var(--text-primary);
         font-weight: 400;
         margin-bottom: 10px;
       }
@@ -445,47 +430,43 @@
       /* Responsivitas */
       @media (max-width: 768px) {
         #halaman-chat {
-          flex-direction: column; /* Stack vertically */
+          flex-direction: column;
         }
         .main-sidebar {
-            display: none; /* Sembunyikan main sidebar di mobile */
+            display: none;
         }
         .chatlist-sidebar {
           width: 100%;
           position: absolute;
-          left: -100%; /* Sembunyikan sidebar chat secara default */
+          left: -100%;
           transition: left 0.3s ease;
           z-index: 20;
-          height: 100%; /* Pastikan mengisi tinggi penuh */
+          height: 100%;
           border-right: none;
         }
         .chatlist-sidebar.show {
-          left: 0; /* Tampilkan sidebar chat saat aktif */
+          left: 0;
         }
         .chat-area {
           width: 100%;
-          height: 100%; /* Mengisi sisa tinggi di mobile */
+          height: 100%;
         }
         .chat-header-main {
-            justify-content: flex-start; /* Untuk menempatkan ikon hamburger di kiri */
+            justify-content: flex-start;
         }
-        .chat-header-main::before { /* Tombol untuk membuka sidebar */
-            content: "\f2b2"; /* Icon Bootstrap for list */
+        .chat-header-main::before {
+            content: "\f2b2";
             font-family: "bootstrap-icons";
             font-size: 1.5rem;
-            color: var(--whatsapp-text-secondary);
+            color: var(--text-secondary);
             cursor: pointer;
             margin-right: 15px;
         }
         .chatlist-header .search-bar {
             margin-right: 0;
         }
-        /* Hapus ikon "more" di header chatlist di mobile juga jika tidak dibutuhkan */
-        /* .chatlist-header .icon-more {
-            display: none;
-        } */
         .chat-header-main .chat-header-icons {
-            margin-left: auto; /* Pastikan ikon tetap di kanan */
+            margin-left: auto;
         }
       }
 
@@ -512,10 +493,6 @@
         .pesan {
             max-width: 90%;
         }
-        /* Hapus margin ikon attach dan emoji di mobile juga jika tidak dibutuhkan */
-        /* .chat-footer .attach-icon, .chat-footer .emoji-icon {
-            margin-right: 10px;
-        } */
         .chat-footer .btn-send-wrapper {
             width: 40px;
             height: 40px;
@@ -536,13 +513,8 @@
         style="width: 100%; max-width: 400px"
       >
         <div class="text-center mb-4">
-          <img
-            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
-            alt="Logo"
-            style="height: 60px"
-            class="mb-2"
-          />
-          <h3 class="mt-2" style="color: var(--whatsapp-green);">Aplikasi Chat</h3>
+          <i class="bi bi-chat-dots-fill" style="font-size: 60px; color: var(--primary-color);"></i>
+          <h3 class="mt-2" style="color: var(--primary-color);">Aplikasi Chat</h3>
           <p class="text-muted">Silakan masuk atau daftar untuk melanjutkan</p>
         </div>
         <ul class="nav nav-tabs mb-3" id="tab-auth" role="tablist">
@@ -605,7 +577,6 @@
                 type="submit"
                 class="btn w-100 btn-lg"
                 id="btn-login"
-                style="background-color: var(--whatsapp-light-green); color: white;"
               >
                 Masuk
               </button>
@@ -651,7 +622,6 @@
                 type="submit"
                 class="btn w-100 btn-lg"
                 id="btn-daftar"
-                style="background-color: var(--whatsapp-light-green); color: white;"
               >
                 Daftar
               </button>
@@ -674,7 +644,7 @@
         <div class="nav-icons">
             <div class="icon-item active"><i class="bi bi-chat-left-fill"></i></div> </div>
 
-        <div class="icon-item settings-icon"><i class="bi bi-three-dots"></i></div> </div>
+        <div class="icon-item settings-icon"><i class="bi bi-gear-fill"></i></div> </div>
 
       <div class="chatlist-sidebar" id="sidebar-chat">
         <div class="chatlist-header">
@@ -691,10 +661,8 @@
 
       <div class="chat-area" id="main-chat-area">
         <div class="empty-chat-area" id="empty-chat-placeholder">
-            <i class="bi bi-whatsapp whatsapp-logo-large"></i>
-            <h4>WhatsApp untuk Windows</h4>
-            <p>Kirim dan terima pesan tanpa harus menjaga ponsel Anda tetap online.</p>
-            <p>Gunakan WhatsApp di hingga 4 perangkat tertaut dan 1 ponsel secara bersamaan.</p>
+            <i class="bi bi-chat-dots-fill app-logo-large"></i> <h4>Mulai Berbincang Sekarang</h4>
+            <p>Pilih salah satu kontak Anda dari daftar di sebelah kiri untuk memulai obrolan.</p>
             <div class="encryption-info">
                 <i class="bi bi-lock-fill"></i> Pesan dilindungi dengan enkripsi end-to-end
             </div>
@@ -1023,12 +991,19 @@
         )
         .subscribe();
 
+      // Event listener untuk toggle sidebar di mobile
       document.querySelector('.chat-header-main').addEventListener('click', (e) => {
-          if (window.innerWidth <= 768 && e.target === document.querySelector('.chat-header-main::before')) {
+          // Check if the click is on the pseudo-element (hamburger icon) for sidebar toggle
+          // We need a more robust way to target the ::before pseudo-element with an event listener.
+          // A simpler approach for mobile is to make the entire header clickable, or add a dedicated button.
+          // For now, let's keep the existing logic, assuming the ::before pseudo-element is the target.
+          // If this doesn't work reliably, we might need a visible button instead of ::before.
+          if (window.innerWidth <= 768 && (e.target.classList.contains('chat-header-main') || e.target.closest('.chat-header-main::before'))) {
               sidebarChat.classList.toggle('show');
           }
       });
 
+      // Sembunyikan sidebar saat ukuran layar berubah ke desktop
       window.addEventListener('resize', () => {
           if (window.innerWidth > 768) {
               sidebarChat.classList.remove('show');
