@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elegant Chat App</title>
+    <!-- CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --dark-color: #1e293b;
+            --light-color: #f8fafc;
+            --success-color: #10b981;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f1f5f9;
+        }
+        
+        .auth-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
+        
+        .chat-container {
+            height: 80vh;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        .user-list {
+            border-right: 1px solid #e2e8f0;
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        .user-item {
+            transition: all 0.2s ease;
+            cursor: pointer;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .user-item:hover {
+            background-color: #f8fafc;
+        }
+        
+        .user-item.active {
+            background-color: #e0e7ff;
+        }
+        
+        .chat-messages {
+            height: calc(100% - 70px);
+            overflow-y: auto;
+            background-color: #f8fafc;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            word-wrap: break-word;
+        }
+        
+        .sent {
+            background-color: var(--primary-color);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 5px;
+        }
+        
+        .received {
+            background-color: white;
+            color: var(--dark-color);
+            margin-right: auto;
+            border-bottom-left-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .message-time {
+            font-size: 0.7rem;
+            opacity: 0.7;
+            text-align: right;
+            margin-top: 3px;
+        }
+        
+        .chat-input {
+            border-top: 1px solid #e2e8f0;
+            background-color: white;
+        }
+        
+        .online-status {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+        
+        .online {
+            background-color: var(--success-color);
+        }
+        
+        .offline {
+            background-color: #94a3b8;
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .user-list {
+                height: auto;
+                max-height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Main App Container -->
+    <div class="container my-5" id="app-container">
+        <!-- Authentication Section (Default View) -->
+        <div class="row justify-content-center" id="auth-section">
+            <div class="col-lg-5 col-md-7">
+                <div class="auth-container">
+                    <!-- Auth Header -->
+                    <div class="gradient-bg text-white p-4 text-center">
+                        <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/7c6a8eec-7e17-4eba-a531-7d2ae653929e.png" alt="Chat app logo with purple gradient background and a white speech bubble icon" class="rounded-circle mb-3" style="width: 60px; height: 60px; object-fit: cover;">
+                        <h4>Welcome to Elegant Chat</h4>
+                        <p class="mb-0">Connect with friends worldwide</p>
+                    </div>
+                    
+                    <!-- Auth Tabs -->
+                    <ul class="nav nav-tabs" id="auth-tabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">Login</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">Register</button>
+                        </li>
+                    </ul>
+                    
+                    <!-- Auth Content -->
+                    <div class="tab-content p-4">
+                        <!-- Login Form -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                            <form id="login-form">
+                                <div class="mb-3">
+                                    <label for="login-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="login-email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="login-password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="login-password" required>
+                                </div>
+                                <button type="submit" class="btn gradient-bg text-white w-100">Login</button>
+                            </form>
+                        </div>
+                        
+                        <!-- Register Form -->
+                        <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                            <form id="register-form">
+                                <div class="mb-3">
+                                    <label for="register-name" class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" id="register-name" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="register-email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-password" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="register-password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-confirm-password" class="form-label">Confirm Password</label>
+                                    <input type="password" class="form-control" id="register-confirm-password" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="register-avatar" class="form-label">Profile Picture</label>
+                                    <input type="file" class="form-control" id="register-avatar" accept="image/*">
+                                    <small class="text-muted">Optional - Upload a profile picture</small>
+                                </div>
+                                <button type="submit" class="btn gradient-bg text-white w-100">Register</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Chat Section (Initially Hidden) -->
+        <div class="d-none" id="chat-section">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="chat-container bg-white">
+                        <!-- Chat Header -->
+                        <div class="chat-header p-3 d-flex justify-content-between align-items-center">
+                            <div class="d-flex align-items-center">
+                                <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/ea6a00a8-dbdf-4ed5-8077-220a419947d7.png" alt="User's profile picture showing a smiling young adult with blue background" class="rounded-circle me-2" id="current-user-avatar">
+                                <div>
+                                    <h5 class="mb-0 text-white" id="current-user-name"></h5>
+                                    <small class="text-white-50">Online</small>
+                                </div>
+                            </div>
+                            <button class="btn btn-outline-light btn-sm" id="logout-btn">
+                                <i class="bi bi-box-arrow-right"></i> Logout
+                            </button>
+                        </div>
+                        
+                        <!-- Chat Body -->
+                        <div class="row h-100 g-0">
+                            <!-- User List -->
+                            <div class="col-md-4 col-lg-3 p-0 user-list">
+                                <div class="p-3 bg-white">
+                                    <div class="input-group mb-3">
+                                        <input type="text" class="form-control" placeholder="Search users..." id="user-search">
+                                        <button class="btn btn-outline-secondary" type="button">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <ul class="list-unstyled mb-0" id="user-list">
+                                    <!-- User items will be added here dynamically -->
+                                    <li class="user-item p-3">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/5f013fe1-f4ac-48f4-ab6e-ab9da0419fe6.png" alt="Profile picture of John Doe - a young male with short brown hair" class="rounded-circle me-2">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">John Doe</h6>
+                                                <small class="text-muted">Hello there!</small>
+                                            </div>
+                                            <span class="online-status online"></span>
+                                        </div>
+                                    </li>
+                                    <li class="user-item p-3">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/2e26c00a-9182-497a-873f-2a01287662e2.png" alt="Profile picture of Jane Smith - a professional woman with glasses" class="rounded-circle me-2">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Jane Smith</h6>
+                                                <small class="text-muted">Meeting at 3pm</small>
+                                            </div>
+                                            <span class="online-status offline"></span>
+                                        </div>
+                                    </li>
+                                    <li class="user-item p-3">
+                                        <div class="d-flex align-items-center">
+                                            <img src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/3d6ac4e2-0c46-46da-9b80-91cfb7845199.png" alt="Profile picture of Mike Johnson - a man with beard and casual look" class="rounded-circle me-2">
+                                            <div class="flex-grow-1">
+                                                <h6 class="mb-0">Mike Johnson</h6>
+                                                <small class="text-muted">See you tomorrow</small>
+                                            </div>
+                                            <span class="online-status online"></span>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Chat Area -->
+                            <div class="col-md-8 col-lg-9 d-flex flex-column p-0">
+                                <!-- Messages will appear here -->
+                                <div class="flex-grow-1 chat-messages p-3" id="chat-messages">
+                                    <!-- Example messages (will be replaced dynamically) -->
+                                    <div class="message received">
+                                        <div>Hello! How are you doing today?</div>
+                                        <div class="message-time">Jane Smith, 10:30 AM</div>
+                                    </div>
+                                    <div class="message sent">
+                                        <div>I'm doing great! Just finished my project.</div>
+                                        <div class="message-time">You, 10:32 AM</div>
+                                    </div>
+                                    <div class="message received">
+                                        <div>That's awesome! Want to grab coffee later?</div>
+                                        <div class="message-time">Jane Smith, 10:33 AM</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Message Input -->
+                                <div class="chat-input p-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Type your message..." id="message-input">
+                                        <button class="btn gradient-bg text-white" type="button" id="send-btn">
+                                            <i class="bi bi-send-fill"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        // Supabase Configuration
+        const supabaseUrl = 'https://feriqnmbfzixgeedmvzw.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlcmlxbm1iZnppeGdlZWRtdnp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODY3NTAsImV4cCI6MjA2NjI2Mjc1MH0.POc4TH7fATyb1lsWmMPmUZUww4vaH_5qgGCsD3MsW-E';
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+        
+        // DOM Elements
+        const authSection = document.getElementById('auth-section');
+        const chatSection = document.getElementById('chat-section');
+        const loginForm = document.getElementById('login-form');
+        const registerForm = document.getElementById('register-form');
+        const logoutBtn = document.getElementById('logout-btn');
+        const currentUserName = document.getElementById('current-user-name');
+        const currentUserAvatar = document.getElementById('current-user-avatar');
+        const userList = document.getElementById('user-list');
+        const chatMessages = document.getElementById('chat-messages');
+        const messageInput = document.getElementById('message-input');
+        const sendBtn = document.getElementById('send-btn');
+        const userSearch = document.getElementById('user-search');
+        
+        // Current User Data
+        let currentUser = null;
+        let selectedChatUser = null;
+        
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuthStatus();
+            setupEventListeners();
+        });
+        
+        // Check if user is already authenticated
+        async function checkAuthStatus() {
+            const { data: { user } } = await supabase.auth.getUser();
+            
+            if (user) {
+                currentUser = user;
+                switchToChatView();
+                loadUserData();
+                loadUsers();
+                setupRealtimeUpdates();
+            }
+        }
+        
+        // Setup event listeners
+        function setupEventListeners() {
+            // Login form
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('login-email').value;
+                const password = document.getElementById('login-password').value;
+                
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
+                
+                if (error) {
+                    alert(error.message);
+                    return;
+                }
+                
+                currentUser = data.user;
+                switchToChatView();
+                loadUserData();
+                loadUsers();
+                setupRealtimeUpdates();
+            });
+            
+            // Register form
+            registerForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('register-name').value;
+                const email = document.getElementById('register-email').value;
+                const password = document.getElementById('register-password').value;
+                const confirmPassword = document.getElementById('register-confirm-password').value;
+                const avatarFile = document.getElementById('register-avatar').files[0];
+                
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match');
+                    return;
+                }
+                
+                // Register user
+                const { data, error } = await supabase.auth.signUp({
+                    email: email,
+                    password: password,
+                    options: {
+                        data: {
+                            name: name
+                        }
+                    }
+                });
+                
+                if (error) {
+                    alert(error.message);
+                    return;
+                }
+                
+                // Upload avatar if provided
+                if (avatarFile) {
+                    const fileExt = avatarFile.name.split('.').pop();
+                    const fileName = `${data.user.id}.${fileExt}`;
+                    const { error: uploadError } = await supabase
+                        .storage
+                        .from('avatars')
+                        .upload(fileName, avatarFile);
+                    
+                    if (!uploadError) {
+                        // Update user profile with avatar URL
+                        const { data: publicUrl } = supabase
+                            .storage
+                            .from('avatars')
+                            .getPublicUrl(fileName);
+                            
+                        await supabase
+                            .from('profiles')
+                            .upsert({ 
+                                id: data.user.id,
+                                name: name,
+                                avatar_url: publicUrl.publicUrl
+                            });
+                    }
+                } else {
+                    await supabase
+                        .from('profiles')
+                        .upsert({ 
+                            id: data.user.id,
+                            name: name
+                        });
+                }
+                
+                alert('Registration successful! Please check your email for verification.');
+                document.getElementById('login-tab').click();
+            });
+            
+            // Logout button
+            logoutBtn.addEventListener('click', async () => {
+                await supabase.auth.signOut();
+                currentUser = null;
+                switchToAuthView();
+            });
+            
+            // Send message button
+            sendBtn.addEventListener('click', sendMessage);
+            messageInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // User search
+            userSearch.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+                const allUsers = document.querySelectorAll('.user-item');
+                
+                allUsers.forEach(user => {
+                    const userName = user.querySelector('h6').textContent.toLowerCase();
+                    if (userName.includes(searchTerm)) {
+                        user.style.display = 'block';
+                    } else {
+                        user.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Switch to chat view
+        function switchToChatView() {
+            authSection.classList.add('d-none');
+            chatSection.classList.remove('d-none');
+        }
+        
+        // Switch to auth view
+        function switchToAuthView() {
+            authSection.classList.remove('d-none');
+            chatSection.classList.add('d-none');
+        }
+        
+        // Load current user data
+        async function loadUserData() {
+            const { data: profile, error } = await supabase
+                .from('profiles')
+                .select('name, avatar_url')
+                .eq('id', currentUser.id)
+                .single();
+            
+            if (error) {
+                console.error('Error loading profile:', error);
+                return;
+            }
+            
+            currentUserName.textContent = profile.name;
+            if (profile.avatar_url) {
+                currentUserAvatar.src = profile.avatar_url;
+            }
+        }
+        
+        // Load all users
+        async function loadUsers() {
+            const { data: users, error } = await supabase
+                .from('profiles')
+                .select('id, name, avatar_url, last_seen')
+                .neq('id', currentUser.id);
+            
+            if (error) {
+                console.error('Error loading users:', error);
+                return;
+            }
+            
+            userList.innerHTML = '';
+            
+            users.forEach(user => {
+                const isOnline = new Date(user.last_seen) > new Date(Date.now() - 300000); // 5 minutes
+                
+                const userItem = document.createElement('li');
+                userItem.className = 'user-item p-3';
+                userItem.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <img src="${user.avatar_url || 'https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/111e4a63-2798-40ed-9a59-79f562b9f133.png'}" 
+                             alt="Profile picture of ${user.name}" 
+                             class="rounded-circle me-2">
+                        <div class="flex-grow-1">
+                            <h6 class="mb-0">${user.name}</h6>
+                            <small class="text-muted">Last seen recently</small>
+                        </div>
+                        <span class="online-status ${isOnline ? 'online' : 'offline'}"></span>
+                    </div>
+                `;
+                
+                userItem.addEventListener('click', () => selectChatUser(user));
+                userList.appendChild(userItem);
+            });
+        }
+        
+        // Select a user to chat with
+        function selectChatUser(user) {
+            selectedChatUser = user;
+            
+            // Highlight selected user
+            document.querySelectorAll('.user-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            event.currentTarget.classList.add('active');
+            
+            // Load chat history
+            loadChatHistory(user.id);
+        }
+        
+        // Load chat history with a user
+        async function loadChatHistory(userId) {
+            const { data: messages, error } = await supabase
+                .from('messages')
+                .select('*, sender:profiles(name, avatar_url)')
+                .or(`and(sender_id.eq.${currentUser.id},receiver_id.eq.${userId}),and(sender_id.eq.${userId},receiver_id.eq.${currentUser.id})`)
+                .order('created_at', { ascending: true });
+            
+            if (error) {
+                console.error('Error loading messages:', error);
+                return;
+            }
+            
+            chatMessages.innerHTML = '';
+            
+            messages.forEach(message => {
+                const isCurrentUser = message.sender_id === currentUser.id;
+                
+                const messageElement = document.createElement('div');
+                messageElement.className = `message ${isCurrentUser ? 'sent' : 'received'}`;
+                messageElement.innerHTML = `
+                    <div>${message.content}</div>
+                    <div class="message-time">${isCurrentUser ? 'You' : message.sender.name}, ${formatTime(message.created_at)}</div>
+                `;
+                
+                chatMessages.appendChild(messageElement);
+            });
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Send a message
+        async function sendMessage() {
+            if (!selectedChatUser || !messageInput.value.trim()) return;
+            
+            const messageContent = messageInput.value.trim();
+            
+            const { data, error } = await supabase
+                .from('messages')
+                .insert([{
+                    sender_id: currentUser.id,
+                    receiver_id: selectedChatUser.id,
+                    content: messageContent
+                }]);
+            
+            if (error) {
+                console.error('Error sending message:', error);
+                return;
+            }
+            
+            // Add message to UI
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message sent';
+            messageElement.innerHTML = `
+                <div>${messageContent}</div>
+                <div class="message-time">You, ${formatTime(new Date())}</div>
+            `;
+            chatMessages.appendChild(messageElement);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Setup realtime updates
+        function setupRealtimeUpdates() {
+            // Listen for new messages
+            supabase
+                .channel('messages')
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `receiver_id=eq.${currentUser.id}`
+                }, payload => {
+                    if (selectedChatUser && payload.new.sender_id === selectedChatUser.id) {
+                        const message = payload.new;
+                        
+                        const messageElement = document.createElement('div');
+                        messageElement.className = 'message received';
+                        messageElement.innerHTML = `
+                            <div>${message.content}</div>
+                            <div class="message-time">${selectedChatUser.name}, ${formatTime(message.created_at)}</div>
+                        `;
+                        chatMessages.appendChild(messageElement);
+                        
+                        // Scroll to bottom
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                })
+                .subscribe();
+                
+            // Update last seen
+            updateLastSeen();
+            setInterval(updateLastSeen, 60000); // Update every minute
+        }
+        
+        // Update user's last seen
+        async function updateLastSeen() {
+            await supabase
+                .from('profiles')
+                .upsert({
+                    id: currentUser.id,
+                    last_seen: new Date().toISOString()
+                });
+        }
+        
+        // Format time
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+    </script>
+</body>
+</html>
+
