@@ -1,1020 +1,553 @@
 <!DOCTYPE html>
 <html lang="id">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aplikasi Chat Saya</title> <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aplikasi Chat Supabase</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-      :root {
-        --primary-color: #007bff; /* Biru terang sebagai warna utama */
-        --light-primary-color: #25d366; /* Warna hijau untuk button, bisa diganti */
-        --bg-primary: #f0f2f5;
-        --bg-secondary: #e5ddd5;
-        --header-bg: #f0f2f5;
-        --border-color: #f2f2f2;
-        --text-primary: #111b21;
-        --text-secondary: #667781;
-      }
-
-      body {
-        font-family: "Segoe UI", sans-serif;
-        background-color: var(--bg-primary);
-        margin: 0;
-        overflow: hidden;
-        display: flex;
-        height: 100vh;
-        width: 100vw;
-      }
-
-      /* Halaman Autentikasi */
-      #halaman-auth {
-        background-color: var(--bg-primary);
-        height: 100vh;
-        width: 100vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        position: absolute;
-        top: 0;
-        left: 0;
-        z-index: 1000;
-      }
-      .card-auth {
-        border-radius: 16px;
-        background-color: #ffffff;
-        border: none;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        width: 100%;
-        max-width: 450px;
-        padding: 30px;
-      }
-      .nav-tabs {
-        border-bottom: none;
-        justify-content: center;
-        display: flex;
-        width: 100%;
-      }
-      .nav-tabs .nav-item {
-        flex-grow: 1;
-        text-align: center;
-      }
-      .nav-tabs .nav-link {
-        border: none;
-        color: var(--text-secondary);
-        font-weight: 500;
-        padding: 12px 20px;
-        transition: all 0.3s ease;
-        width: 100%;
-      }
-      .nav-tabs .nav-link.active {
-        background-color: var(--primary-color); /* Menggunakan primary-color */
-        color: white;
-        border-radius: 8px;
-      }
-      /* Mengganti warna tombol login/daftar */
-      #btn-login, #btn-daftar {
-          background-color: var(--primary-color) !important;
-          color: white !important;
-      }
-
-      /* Halaman Chat Utama */
-      #halaman-chat {
-        height: 100vh;
-        width: 100vw;
-        display: flex;
-        background-color: var(--bg-primary);
-      }
-
-      /* Sidebar Kiri Utama (Ikon Navigasi Global) */
-      .main-sidebar {
-        width: 70px;
-        background-color: #e7e7e7;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding-top: 20px;
-        border-right: 1px solid var(--border-color);
-      }
-      .main-sidebar .profile-thumb {
-        width: 45px;
-        height: 45px;
-        border-radius: 50%;
-        background-color: #ccc;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.5rem;
-        color: #fff;
-        margin-bottom: 25px;
-        cursor: pointer;
-        overflow: hidden;
-      }
-      .main-sidebar .profile-thumb img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .main-sidebar .nav-icons {
-        flex-grow: 1;
-      }
-      .main-sidebar .nav-icons .icon-item {
-        width: 100%;
-        height: 50px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.6rem;
-        color: #666;
-        cursor: pointer;
-        transition: background-color 0.2s ease, color 0.2s ease;
-      }
-      .main-sidebar .nav-icons .icon-item:hover {
-        background-color: #dcdcdc;
-        color: var(--primary-color); /* Menggunakan primary-color */
-      }
-      .main-sidebar .nav-icons .icon-item.active {
-        color: var(--primary-color); /* Menggunakan primary-color */
-      }
-      .main-sidebar .settings-icon {
-        margin-top: auto;
-        margin-bottom: 20px;
-      }
-      .main-sidebar .dropdown-menu {
-        left: 75px;
-        top: auto !important;
-        bottom: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      }
-
-
-      /* Sidebar Chat (Daftar Percakapan) */
-      .chatlist-sidebar {
-        width: 350px;
-        background-color: #ffffff;
-        border-right: 1px solid var(--border-color);
-        display: flex;
-        flex-direction: column;
-        overflow: hidden;
-      }
-      .chatlist-header {
-        padding: 10px 16px;
-        background-color: var(--header-bg);
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-      }
-      .chatlist-header .search-bar {
-        flex-grow: 1;
-        position: relative;
-        margin-right: 10px;
-      }
-      .chatlist-header .search-bar input {
-        border-radius: 20px;
-        background-color: #f0f2f5;
-        border: none;
-        padding: 8px 12px 8px 40px;
-        width: 100%;
-        font-size: 0.9rem;
-      }
-      .chatlist-header .search-bar .bi-search {
-        position: absolute;
-        left: 15px;
-        top: 50%;
-        transform: translateY(-50%);
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-      }
-
-      .chatlist-content {
-        flex-grow: 1;
-        overflow-y: auto;
-      }
-      .list-group-item {
-        border: none;
-        padding: 10px 16px;
-        display: flex;
-        align-items: center;
-        transition: background-color 0.1s ease;
-        border-bottom: 1px solid var(--border-color);
-      }
-      .list-group-item:last-child {
-          border-bottom: none;
-      }
-      .list-group-item:hover {
-        background-color: #f5f5f5;
-        cursor: pointer;
-      }
-      .list-group-item.active {
-        background-color: #e0f2f7; /* Warna aktif, bisa disesuaikan */
-        color: var(--text-primary);
-      }
-      .list-group-item .avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background-color: #ccc;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.8rem;
-        color: #fff;
-        margin-right: 15px;
-        flex-shrink: 0;
-        overflow: hidden;
-      }
-      .list-group-item .avatar img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-      .list-group-item .chat-info {
-        flex-grow: 1;
-        overflow: hidden;
-      }
-      .list-group-item .chat-info .name {
-        font-weight: 500;
-        font-size: 1.05rem;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .list-group-item .chat-info .last-message {
-        font-size: 0.85rem;
-        color: var(--text-secondary);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-      .list-group-item .chat-meta {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        font-size: 0.75rem;
-        color: var(--text-secondary);
-        margin-left: 10px;
-        flex-shrink: 0;
-      }
-      .list-group-item .chat-meta .time {
-        margin-bottom: 3px;
-      }
-      .list-group-item .chat-meta .unread-badge {
-        background-color: var(--light-primary-color); /* Menggunakan light-primary-color */
-        color: white;
-        font-size: 0.7rem;
-        padding: 2px 7px;
-        border-radius: 10px;
-        min-width: 20px;
-        text-align: center;
-      }
-
-
-      /* Area Chat */
-      .chat-area {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        background-color: var(--bg-secondary);
-      }
-      .chat-header-main {
-        padding: 10px 16px;
-        background-color: var(--header-bg);
-        border-left: 1px solid var(--border-color);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-        z-index: 10;
-        display: flex;
-        align-items: center;
-      }
-      .chat-header-main .chat-partner-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background-color: #ccc;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-size: 1.5rem;
-        color: #fff;
-        margin-right: 15px;
-      }
-      .chat-header-main .chat-partner-name {
-        font-weight: 500;
-        font-size: 1.1rem;
-        margin-bottom: 0;
-        color: var(--text-primary);
-      }
-      .chat-header-main .chat-header-icons {
-          margin-left: auto;
-      }
-
-
-      .chat-messages {
-        flex: 1;
-        padding: 20px 80px;
-        overflow-y: auto;
-        /* Hapus background-image terkait WhatsApp */
-        background-color: var(--bg-secondary); /* Warna solid sebagai pengganti */
-        display: flex;
-        flex-direction: column;
-      }
-      .pesan {
-        padding: 10px 15px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        max-width: 65%;
-        word-wrap: break-word;
-        font-size: 0.9rem;
-        box-shadow: 0 1px 0.5px rgba(0, 0, 0, 0.13);
-      }
-      .dikirim {
-        background-color: #dcf8c6;
-        align-self: flex-end;
-        margin-left: auto;
-      }
-      .diterima {
-        background-color: #ffffff;
-        align-self: flex-start;
-        margin-right: auto;
-      }
-      .pesan-timestamp {
-          font-size: 0.65rem;
-          color: rgba(0,0,0,0.45);
-          float: right;
-          margin-left: 10px;
-          margin-top: 5px;
-      }
-
-      .chat-footer {
-        padding: 10px 16px;
-        background-color: var(--header-bg);
-        border-top: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-      }
-      .chat-footer .input-group {
-          flex-grow: 1;
-      }
-      .chat-footer .form-control {
-        border-radius: 20px;
-        background-color: #ffffff;
-        border: none;
-        padding: 10px 15px;
-        box-shadow: none;
-      }
-      .chat-footer .btn-send-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 45px;
-        height: 45px;
-        margin-left: 10px;
-        background-color: var(--primary-color); /* Menggunakan primary-color */
-        border-radius: 50%;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-      }
-      .chat-footer .btn-send-wrapper:hover {
-          background-color: var(--primary-color); /* Tetap primary color */
-          filter: brightness(0.9); /* Sedikit gelap saat hover */
-      }
-      .chat-footer .btn-send-wrapper i {
-        font-size: 1.3rem;
-        color: white;
-      }
-
-
-      /* Tampilan Default Area Chat Kosong */
-      .empty-chat-area {
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
-        text-align: center;
-        color: var(--text-secondary);
-        background-color: var(--bg-primary);
-      }
-      .empty-chat-area .app-logo-large { /* Mengganti whatsapp-logo-large */
-        font-size: 8rem;
-        color: rgba(0, 0, 0, 0.08);
-        margin-bottom: 20px;
-      }
-      .empty-chat-area h4 {
-        color: var(--text-primary);
-        font-weight: 400;
-        margin-bottom: 10px;
-      }
-      .empty-chat-area p {
-        max-width: 400px;
-        line-height: 1.5;
-        font-size: 0.95rem;
-      }
-      .empty-chat-area .encryption-info {
-        margin-top: 30px;
-        font-size: 0.8rem;
-        color: rgba(0, 0, 0, 0.4);
-      }
-      .empty-chat-area .encryption-info i {
-        margin-right: 5px;
-      }
-
-
-      /* Responsivitas */
-      @media (max-width: 768px) {
-        #halaman-chat {
-          flex-direction: column;
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
         }
-        .main-sidebar {
+
+        /* Halaman Autentikasi */
+        #halaman-auth {
+            max-width: 400px;
+            width: 100%;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+        }
+        #halaman-auth h2 {
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #333;
+            text-align: center;
+        }
+        #halaman-auth .form-control {
+            border-radius: 8px;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+        #halaman-auth .btn {
+            border-radius: 8px;
+            padding: 12px 0;
+            font-weight: 500;
+            margin-top: 15px;
+        }
+        #halaman-auth .nav-tabs {
+            margin-bottom: 25px;
+            border-bottom: none;
+            justify-content: center;
+        }
+        #halaman-auth .nav-tabs .nav-link {
+            border: none;
+            border-radius: 0;
+            border-bottom: 3px solid transparent;
+            font-weight: 500;
+            color: #555;
+            padding: 10px 20px;
+        }
+        #halaman-auth .nav-tabs .nav-link.active {
+            color: #007bff;
+            border-bottom-color: #007bff;
+            background-color: transparent;
+        }
+
+        /* Halaman Chat */
+        #halaman-chat {
+            width: 100%;
+            height: 95vh;
+            max-width: 1200px; /* Lebar maksimal aplikasi chat */
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: none; /* Default hidden, controlled by JS */
+        }
+
+        .chat-sidebar {
+            width: 350px; /* Lebar default sidebar */
+            border-right: 1px solid #eee;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            position: relative; /* Untuk positioning tombol logout mobile */
+        }
+
+        .chatlist-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #fff;
+        }
+        .chatlist-header h5 {
+            font-weight: 600;
+            margin-bottom: 0;
+            color: #333;
+        }
+        .chatlist-header .dropdown-toggle::after {
             display: none;
         }
-        .chatlist-sidebar {
-          width: 100%;
-          position: absolute;
-          left: -100%;
-          transition: left 0.3s ease;
-          z-index: 20;
-          height: 100%;
-          border-right: none;
+        .chatlist-header .dropdown-menu {
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .chatlist-sidebar.show {
-          left: 0;
+        .chatlist-header .dropdown-item {
+            padding: 10px 15px;
+            font-size: 0.95rem;
         }
-        .chat-area {
-          width: 100%;
-          height: 100%;
-        }
-        .chat-header-main {
-            justify-content: flex-start;
-        }
-        .chat-header-main::before {
-            content: "\f2b2";
-            font-family: "bootstrap-icons";
-            font-size: 1.5rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            margin-right: 15px;
-        }
-        .chatlist-header .search-bar {
-            margin-right: 0;
-        }
-        .chat-header-main .chat-header-icons {
-            margin-left: auto;
-        }
-      }
 
-      @media (max-width: 576px) {
-        .card-auth {
-          margin: 15px;
-          padding: 20px;
+        .chat-list ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1; /* Biarkan daftar chat mengisi ruang yang tersedia */
+            overflow-y: auto; /* Scrollable */
         }
-        .list-group-item .avatar {
+        .chat-list ul::-webkit-scrollbar {
+            width: 8px;
+        }
+        .chat-list ul::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .chat-list ul::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        .chat-list ul::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .chat-list li {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .chat-list li:hover {
+            background-color: #f0f2f5;
+        }
+        .chat-list li.active {
+            background-color: #e9ecef;
+        }
+        .chat-list li .avatar {
             width: 45px;
             height: 45px;
+            border-radius: 50%;
+            background-color: #007bff;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-size: 1.5rem;
-            margin-right: 10px;
+            margin-right: 15px;
         }
-        .list-group-item .chat-info .name {
-            font-size: 1rem;
+        .chat-list li .chat-info {
+            flex-grow: 1;
         }
-        .list-group-item .chat-info .last-message {
-            font-size: 0.8rem;
+        .chat-list li .chat-info .name {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 2px;
         }
-        .chat-messages {
-            padding: 15px;
+        .chat-list li .chat-info .last-message {
+            font-size: 0.85rem;
+            color: #666;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 180px; /* Batasi lebar pesan terakhir */
         }
-        .pesan {
-            max-width: 90%;
+        .chat-list li .chat-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            font-size: 0.75rem;
+            color: #999;
         }
-        .chat-footer .btn-send-wrapper {
+        .chat-list li .chat-meta .unread-badge {
+            background-color: #28a745;
+            color: #fff;
+            border-radius: 50%;
+            padding: 4px 8px;
+            font-size: 0.7rem;
+            margin-top: 5px;
+        }
+
+        /* Main Chat Area */
+        .main-chat-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Penting: agar flexbox bekerja dengan benar untuk children */
+        }
+
+        /* Chat Content Container */
+        #chat-content-container {
+            flex-grow: 1; /* Penting: biarkan container ini mengisi sisa ruang vertikal */
+            display: flex;
+            flex-direction: column;
+            height: 100%; /* Memastikan ini mengambil tinggi penuh dari parent .main-chat-area */
+            overflow: hidden; /* Penting: Agar scrollbar hanya ada di kotak-pesan */
+        }
+
+        .chat-header-main {
+            padding: 15px 20px;
+            border-bottom: 1px solid #eee;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0; /* Penting: Pastikan header tidak mengecil */
+        }
+        .chat-header-main .chat-partner-info {
+            display: flex;
+            align-items: center;
+        }
+        .chat-header-main .chat-partner-avatar {
             width: 40px;
             height: 40px;
+            border-radius: 50%;
+            background-color: #6c757d;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            margin-right: 10px;
         }
-        .chat-footer .btn-send-wrapper i {
+        .chat-header-main .chat-partner-name {
+            font-weight: 600;
+            color: #333;
             font-size: 1.1rem;
         }
-      }
+
+        #kotak-pesan {
+            flex-grow: 1; /* Penting: ini akan mengisi semua ruang yang tersisa */
+            padding: 20px;
+            overflow-y: auto; /* Ini yang membuat pesan bisa di-scroll */
+            background-color: #f9f9f9;
+            /* Tambahan untuk scroll smooth (opsional) */
+            scroll-behavior: smooth;
+        }
+        #kotak-pesan::-webkit-scrollbar {
+            width: 8px;
+        }
+        #kotak-pesan::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        #kotak-pesan::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 4px;
+        }
+        #kotak-pesan::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        .pesan {
+            padding: 10px 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            max-width: 70%;
+            position: relative;
+            font-size: 0.95rem;
+        }
+        .pesan.dikirim {
+            background-color: #dcf8c6;
+            align-self: flex-end;
+            margin-left: auto;
+        }
+        .pesan.diterima {
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            align-self: flex-start;
+            margin-right: auto;
+        }
+        .pesan-timestamp {
+            font-size: 0.7rem;
+            color: #888;
+            margin-left: 10px;
+            display: block; /* Menempatkan timestamp di baris baru */
+            text-align: right; /* Rata kanan timestamp */
+            margin-top: 5px;
+        }
+        .pesan.diterima .pesan-timestamp {
+            text-align: left; /* Rata kiri timestamp untuk pesan diterima */
+        }
+
+        .chat-input-area {
+            padding: 15px 20px;
+            border-top: 1px solid #eee;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            flex-shrink: 0; /* Penting: Pastikan area input tidak mengecil */
+        }
+        .chat-input-area .form-control {
+            flex-grow: 1;
+            border-radius: 20px;
+            padding: 10px 18px;
+            border: 1px solid #ddd;
+            margin-right: 10px;
+            background-color: #f0f2f5;
+        }
+        .chat-input-area .btn-send-wrapper {
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+        .chat-input-area .btn-send-wrapper:hover {
+            background-color: #0056b3;
+        }
+
+        /* Empty Chat Placeholder */
+        #empty-chat-placeholder {
+            flex-grow: 1; /* Biarkan placeholder mengisi sisa ruang saat aktif */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #888;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+        #empty-chat-placeholder i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #ccc;
+        }
+
+        /* --- Responsivitas Mobile --- */
+        /* Sembunyikan tombol toggle di desktop */
+        .btn-toggle-chatlist, .btn-back-to-chatlist {
+            display: none;
+        }
+
+        /* Sembunyikan tombol logout desktop di mobile */
+        #btn-keluar {
+            display: block; /* Default desktop */
+        }
+        #btn-keluar-mobile {
+            display: none; /* Default hidden */
+        }
+
+        @media (max-width: 768px) {
+            body {
+                align-items: flex-start; /* Untuk mobile, sejajar dari atas */
+                min-height: 100vh;
+                background-color: #ffffff; /* Ubah background body di mobile */
+            }
+
+            #halaman-chat {
+                height: 100vh; /* Penuhi tinggi layar di mobile */
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+            }
+
+            .chat-sidebar {
+                position: absolute; /* Absolute positioning untuk sidebar */
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: 100%;
+                z-index: 1000;
+                transform: translateX(-100%); /* Sembunyikan sidebar di luar layar */
+                transition: transform 0.3s ease-in-out;
+                border-right: none;
+                background-color: #fff;
+            }
+            .chat-sidebar.show {
+                transform: translateX(0); /* Tampilkan sidebar */
+            }
+
+            .main-chat-area {
+                width: 100%;
+                height: 100%; /* Penting untuk mobile juga */
+            }
+
+            /* Tampilkan tombol toggle di mobile */
+            .btn-toggle-chatlist {
+                display: block; /* Tampilkan di mobile */
+                font-size: 1.5rem;
+                cursor: pointer;
+                color: #555;
+            }
+
+            /* Tampilkan tombol kembali di mobile */
+            .btn-back-to-chatlist {
+                display: block; /* Tampilkan di mobile */
+                font-size: 1.5rem;
+                margin-right: 15px; /* Spasi dari avatar */
+                cursor: pointer;
+                color: #555;
+            }
+
+            /* Sembunyikan tombol logout desktop dan tampilkan yang mobile */
+            #btn-keluar {
+                display: none;
+            }
+            #btn-keluar-mobile {
+                display: block; /* Tampilkan di mobile sidebar */
+                position: absolute; /* Positioning relatif terhadap sidebar */
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 40px); /* Sesuaikan lebar */
+                border-radius: 8px;
+                padding: 10px 0;
+                font-weight: 500;
+            }
+
+            /* Sesuaikan padding dan font size untuk mobile */
+            .chatlist-header, .chat-header-main, .chat-input-area {
+                padding: 10px 15px;
+            }
+            .chat-header-main .chat-partner-name {
+                font-size: 1rem;
+            }
+            .chat-input-area .form-control {
+                padding: 8px 15px;
+            }
+            .chat-input-area .btn-send-wrapper {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1rem;
+            }
+            .chat-list li {
+                padding: 12px 15px;
+            }
+            .chat-list li .avatar {
+                width: 40px;
+                height: 40px;
+                font-size: 1.3rem;
+                margin-right: 10px;
+            }
+            .chat-list li .chat-info .name {
+                font-size: 0.95rem;
+            }
+            .chat-list li .chat-info .last-message {
+                font-size: 0.8rem;
+                max-width: 120px; /* Lebih kecil untuk mobile */
+            }
+        }
     </style>
-  </head>
-  <body>
-    <div
-      id="halaman-auth"
-      class="d-flex justify-content-center align-items-center vh-100"
-    >
-      <div
-        class="card card-auth shadow p-4"
-        style="width: 100%; max-width: 400px"
-      >
-        <div class="text-center mb-4">
-          <i class="bi bi-chat-dots-fill" style="font-size: 60px; color: var(--primary-color);"></i>
-          <h3 class="mt-2" style="color: var(--primary-color);">Aplikasi Chat</h3>
-          <p class="text-muted">Silakan masuk atau daftar untuk melanjutkan</p>
-        </div>
-        <ul class="nav nav-tabs mb-3" id="tab-auth" role="tablist">
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link active"
-              id="masuk-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#masuk"
-              type="button"
-              role="tab"
-              aria-controls="masuk"
-              aria-selected="true"
-            >
-              Masuk
-            </button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button
-              class="nav-link"
-              id="daftar-tab"
-              data-bs-toggle="tab"
-              data-bs-target="#daftar"
-              type="button"
-              role="tab"
-              aria-controls="daftar"
-              aria-selected="false"
-            >
-              Daftar
-            </button>
-          </li>
+</head>
+<body>
+
+    <div id="halaman-auth" class="d-flex flex-column align-items-center justify-content-center d-none">
+        <h2>Aplikasi Chat</h2>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">Masuk</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="daftar-tab" data-bs-toggle="tab" data-bs-target="#daftar" type="button" role="tab" aria-controls="daftar" aria-selected="false">Daftar</button>
+            </li>
         </ul>
-        <div class="tab-content">
-          <div
-            class="tab-pane fade show active"
-            id="masuk"
-            role="tabpanel"
-            aria-labelledby="masuk-tab"
-          >
-            <form id="form-login">
-              <div class="mb-3">
-                <label for="email-login" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email-login"
-                  required
-                />
-              </div>
-              <div class="mb-4">
-                <label for="password-login" class="form-label">Kata Sandi</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password-login"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                class="btn w-100 btn-lg"
-                id="btn-login"
-              >
-                Masuk
-              </button>
-            </form>
-          </div>
-          <div
-            class="tab-pane fade"
-            id="daftar"
-            role="tabpanel"
-            aria-labelledby="daftar-tab"
-          >
-            <form id="form-daftar">
-              <div class="mb-3">
-                <label for="nama-daftar" class="form-label">Nama</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="nama-daftar"
-                  required
-                />
-              </div>
-              <div class="mb-3">
-                <label for="email-daftar" class="form-label">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email-daftar"
-                  required
-                />
-              </div>
-              <div class="mb-4">
-                <label for="password-daftar" class="form-label"
-                  >Kata Sandi</label
-                >
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password-daftar"
-                  required
-                />
-              </div>
-              <button
-                type="submit"
-                class="btn w-100 btn-lg"
-                id="btn-daftar"
-              >
-                Daftar
-              </button>
-            </form>
-          </div>
+        <div class="tab-content" id="myTabContent" style="width: 100%;">
+            <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                <form id="form-login">
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="email-login" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="password-login" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="btn-login">Masuk</button>
+                </form>
+            </div>
+            <div class="tab-pane fade" id="daftar" role="tabpanel" aria-labelledby="daftar-tab">
+                <form id="form-daftar">
+                    <div class="mb-3">
+                        <input type="text" class="form-control" id="nama-daftar" placeholder="Nama Lengkap" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="email" class="form-control" id="email-daftar" placeholder="Email" required>
+                    </div>
+                    <div class="mb-3">
+                        <input type="password" class="form-control" id="password-daftar" placeholder="Password" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100" id="btn-daftar">Daftar</button>
+                </form>
+            </div>
         </div>
-      </div>
     </div>
 
     <div id="halaman-chat" class="d-none">
-      <div class="main-sidebar">
-        <div class="profile-thumb" data-bs-toggle="dropdown" aria-expanded="false">
-            <i class="bi bi-person-fill"></i> </div>
-        <div class="dropdown-menu">
-            <li><span class="dropdown-item-text">Halo, <strong id="nama-pengguna-dropdown"></strong></span></li>
-            <li><hr class="dropdown-divider"></li>
-            <li><button class="dropdown-item text-danger" id="btn-keluar">Keluar</button></li>
-        </div>
-
-        <div class="nav-icons">
-            <div class="icon-item active"><i class="bi bi-chat-left-fill"></i></div> </div>
-
-        <div class="icon-item settings-icon"><i class="bi bi-gear-fill"></i></div> </div>
-
-      <div class="chatlist-sidebar" id="sidebar-chat">
-        <div class="chatlist-header">
-            <div class="search-bar">
-                <i class="bi bi-search"></i>
-                <input type="text" class="form-control" placeholder="Cari atau mulai chat baru">
+        <div id="sidebar-chat" class="chat-sidebar">
+            <div class="chatlist-header">
+                <h5 class="flex-grow-1">Chats</h5>
+                <div class="dropdown">
+                    <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span id="nama-pengguna-dropdown">Pengguna</span> <i class="bi bi-gear-fill"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <li><a class="dropdown-item" href="#" id="btn-keluar">Keluar</a></li>
+                    </ul>
+                </div>
             </div>
-            </div>
-        <div class="chatlist-content">
-            <ul class="list-group" id="daftar-pengguna">
+            <div class="chat-list">
+                <ul id="daftar-pengguna">
+                    <li class="list-group-item disabled text-center text-muted py-5">
+                        Memuat daftar pengguna...
+                    </li>
                 </ul>
-        </div>
-      </div>
-
-      <div class="chat-area" id="main-chat-area">
-        <div class="empty-chat-area" id="empty-chat-placeholder">
-            <i class="bi bi-chat-dots-fill app-logo-large"></i> <h4>Mulai Berbincang Sekarang</h4>
-            <p>Pilih salah satu kontak Anda dari daftar di sebelah kiri untuk memulai obrolan.</p>
-            <div class="encryption-info">
             </div>
+            <button id="btn-keluar-mobile" class="btn btn-danger w-100 mt-auto">Keluar</button>
         </div>
 
-        <div id="chat-content-container" class="d-none flex-column flex-grow-1">
+        <div id="main-chat-area" class="main-chat-area">
             <div class="chat-header-main">
-                <div class="chat-partner-avatar">
-                    <i class="bi bi-person-fill"></i>
+                <i class="bi bi-arrow-left btn-back-to-chatlist" id="btn-back-to-chatlist"></i>
+                <div class="chat-partner-info flex-grow-1">
+                    <div class="avatar chat-partner-avatar"><i class="bi bi-person-fill"></i></div>
+                    <span id="chat-partner-name">Pilih Kontak</span>
                 </div>
-                <h5 class="chat-partner-name" id="chat-partner-name">Nama Penerima</h5>
-                <div class="chat-header-icons">
-                    </div>
+                <i class="bi bi-list btn-toggle-chatlist" id="btn-toggle-chatlist"></i>
             </div>
-            <div class="chat-messages" id="kotak-pesan"></div>
-            <div class="chat-footer">
-                <div class="input-group">
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="input-pesan"
-                      placeholder="Tulis pesan..."
-                    />
+
+            <div id="chat-content-container" class="d-flex flex-column h-100 d-none">
+                <div id="kotak-pesan">
+                    </div>
+                <div class="chat-input-area">
+                    <input type="text" id="input-pesan" class="form-control" placeholder="Ketik pesan..." aria-label="Ketik pesan">
+                    <div class="btn-send-wrapper">
+                        <i class="bi bi-send-fill"></i>
+                    </div>
                 </div>
-                <div class="btn-send-wrapper">
-                    <i class="bi bi-send-fill"></i>
-                </div>
+            </div>
+
+            <div id="empty-chat-placeholder" class="d-flex flex-column align-items-center justify-content-center">
+                <i class="bi bi-chat-dots-fill"></i>
+                <p>Pilih obrolan untuk memulai percakapan</p>
             </div>
         </div>
-      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module">
-      import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm";
-      const supabase = createClient(
-        "https://feriqnmbfzixgeedmvzw.supabase.co",
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlcmlxbm1iZnppeGdlZWRtdnp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODY3NTAsImV4cCI6MjA2NjI2Mjc1MH0.POc4TH7fATyb1lsWmMPmUZUww4vaH_5qgGCsD3MsW-E"
-      );
-
-      const halamanAuth = document.getElementById("halaman-auth");
-      const halamanChat = document.getElementById("halaman-chat");
-      const namaPenggunaDropdown = document.getElementById("nama-pengguna-dropdown");
-      const formLogin = document.getElementById("form-login");
-      const formDaftar = document.getElementById("form-daftar");
-      const daftarPengguna = document.getElementById("daftar-pengguna");
-      const kotakPesan = document.getElementById("kotak-pesan");
-      const inputPesan = document.getElementById("input-pesan");
-      const btnKirim = document.querySelector(".btn-send-wrapper");
-      const btnKeluar = document.getElementById("btn-keluar");
-      const btnLogin = document.getElementById("btn-login");
-      const btnDaftar = document.getElementById("btn-daftar");
-      const sidebarChat = document.getElementById("sidebar-chat");
-      const mainChatArea = document.getElementById("main-chat-area");
-      const emptyChatPlaceholder = document.getElementById("empty-chat-placeholder");
-      const chatContentContainer = document.getElementById("chat-content-container");
-      const chatPartnerName = document.getElementById("chat-partner-name");
-
-
-      let penggunaSekarang = null;
-      let penerimaID = null;
-      let penerimaNama = "";
-
-      const storedUserId = localStorage.getItem("userId");
-      if (storedUserId) loginWithStoredUser(storedUserId);
-
-      async function loginWithStoredUser(userId) {
-        const { data } = await supabase
-          .from("pengguna")
-          .select("*")
-          .eq("id", userId)
-          .single();
-        if (data) {
-          penggunaSekarang = data;
-          halamanAuth.classList.add("d-none");
-          halamanChat.classList.remove("d-none");
-          halamanChat.classList.add("d-flex");
-          namaPenggunaDropdown.textContent = data.nama;
-          muatPengguna();
-        }
-      }
-
-      formDaftar.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        btnDaftar.disabled = true;
-        btnDaftar.innerText = "Memproses...";
-        const nama = document.getElementById("nama-daftar").value;
-        const email = document.getElementById("email-daftar").value;
-        const password = document.getElementById("password-daftar").value;
-        const { data, error } = await supabase
-          .from("pengguna")
-          .insert([{ nama, email, password }])
-          .select()
-          .single();
-        btnDaftar.disabled = false;
-        btnDaftar.innerText = "Daftar";
-        if (!error) {
-          penggunaSekarang = data;
-          localStorage.setItem("userId", data.id);
-          halamanAuth.classList.add("d-none");
-          halamanChat.classList.remove("d-none");
-          halamanChat.classList.add("d-flex");
-          namaPenggunaDropdown.textContent = data.nama;
-          muatPengguna();
-        } else {
-            alert(error.message);
-        }
-      });
-
-      formLogin.addEventListener("submit", async (e) => {
-        e.preventDefault();
-        btnLogin.disabled = true;
-        btnLogin.innerText = "Memproses...";
-        const email = document.getElementById("email-login").value;
-        const password = document.getElementById("password-login").value;
-        const { data, error } = await supabase
-          .from("pengguna")
-          .select("*")
-          .eq("email", email)
-          .eq("password", password)
-          .single();
-        btnLogin.disabled = false;
-        btnLogin.innerText = "Masuk";
-        if (data) {
-          penggunaSekarang = data;
-          localStorage.setItem("userId", data.id);
-          halamanAuth.classList.add("d-none");
-          halamanChat.classList.remove("d-none");
-          halamanChat.classList.add("d-flex");
-          namaPenggunaDropdown.textContent = data.nama;
-          muatPengguna();
-        } else {
-          alert(
-            "Login gagal: " + (error?.message || "Email atau password salah")
-          );
-        }
-      });
-
-      async function muatPengguna() {
-        const { data: penggunaData } = await supabase
-          .from("pengguna")
-          .select("id, nama")
-          .neq("id", penggunaSekarang.id);
-
-        daftarPengguna.innerHTML = "";
-        for (const p of penggunaData) {
-          const li = document.createElement("li");
-          li.className = "list-group-item";
-          li.dataset.userId = p.id;
-          li.innerHTML = `
-            <div class="avatar"><i class="bi bi-person-fill"></i></div>
-            <div class="chat-info">
-                <div class="name">${p.nama}</div>
-                <div class="last-message" id="last-message-${p.id}"></div>
-            </div>
-            <div class="chat-meta">
-                <div class="time" id="chat-time-${p.id}"></div>
-                <div class="unread-badge d-none" id="unread-badge-${p.id}">0</div>
-            </div>
-          `;
-          li.onclick = () => pilihPenerima(p.id, p.nama, li);
-          daftarPengguna.appendChild(li);
-
-          await updateChatPreview(p.id);
-        }
-      }
-
-      async function updateChatPreview(contactId) {
-          const { data: messages } = await supabase
-              .from("pesan")
-              .select("konten, dibuat_pada, pengirim_id")
-              .or(
-                  `and(pengirim_id.eq.${penggunaSekarang.id},penerima_id.eq.${contactId}),and(pengirim_id.eq.${contactId},penerima_id.eq.${penggunaSekarang.id})`
-              )
-              .order("dibuat_pada", { ascending: false })
-              .limit(1);
-
-          const lastMessageElem = document.getElementById(`last-message-${contactId}`);
-          const chatTimeElem = document.getElementById(`chat-time-${contactId}`);
-
-          if (messages && messages.length > 0) {
-              const lastMessage = messages[0];
-              const isSender = lastMessage.pengirim_id === penggunaSekarang.id;
-              const prefix = isSender ? "Anda: " : "";
-              lastMessageElem.textContent = prefix + lastMessage.konten;
-
-              const messageDate = new Date(lastMessage.dibuat_pada);
-              const today = new Date();
-              const yesterday = new Date(today);
-              yesterday.setDate(today.getDate() - 1);
-
-              if (messageDate.toDateString() === today.toDateString()) {
-                  chatTimeElem.textContent = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-              } else if (messageDate.toDateString() === yesterday.toDateString()) {
-                  chatTimeElem.textContent = "Yesterday";
-              } else {
-                  chatTimeElem.textContent = messageDate.toLocaleDateString('id-ID', { day: '2-digit', month: '2-digit', year: 'numeric' });
-              }
-          } else {
-              lastMessageElem.textContent = "Belum ada chat.";
-              chatTimeElem.textContent = "";
-          }
-      }
-
-
-      function pilihPenerima(id, nama, liElement) {
-        penerimaID = id;
-        penerimaNama = nama;
-        document
-          .querySelectorAll("#daftar-pengguna li")
-          .forEach((li) => li.classList.remove("active"));
-        liElement.classList.add("active");
-
-        emptyChatPlaceholder.classList.add("d-none");
-        chatContentContainer.classList.remove("d-none");
-        chatContentContainer.classList.add("d-flex");
-        chatPartnerName.textContent = penerimaNama;
-
-        muatPesan();
-
-        if (window.innerWidth <= 768) {
-            sidebarChat.classList.remove('show');
-        }
-      }
-
-      async function muatPesan() {
-        if (!penggunaSekarang || !penerimaID) {
-          kotakPesan.innerHTML = "<p class='text-center text-muted mt-5'>Pilih kontak untuk mulai chat.</p>";
-          return;
-        }
-
-        const { data } = await supabase
-          .from("pesan")
-          .select("*")
-          .or(
-            `and(pengirim_id.eq.${penggunaSekarang.id},penerima_id.eq.${penerimaID}),and(pengirim_id.eq.${penerimaID},penerima_id.eq.${penggunaSekarang.id})`
-          )
-          .order("dibuat_pada", { ascending: true });
-
-        kotakPesan.innerHTML = "";
-        if (data && data.length > 0) {
-            data.forEach((p) => {
-                tampilkanPesan(p);
-            });
-        } else {
-            kotakPesan.innerHTML = "<p class='text-center text-muted mt-5'>Belum ada pesan dalam obrolan ini.</p>";
-        }
-
-        kotakPesan.scrollTop = kotakPesan.scrollHeight;
-      }
-
-      function tampilkanPesan(pesan) {
-        const div = document.createElement("div");
-        const messageDate = new Date(pesan.dibuat_pada);
-        const timeString = messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-        div.className =
-          "pesan " +
-          (pesan.pengirim_id === penggunaSekarang.id ? "dikirim" : "diterima");
-        div.innerHTML = `${pesan.konten}<span class="pesan-timestamp">${timeString}</span>`;
-        kotakPesan.appendChild(div);
-        kotakPesan.scrollTop = kotakPesan.scrollHeight;
-      }
-
-      btnKirim.addEventListener("click", kirimPesan);
-      inputPesan.addEventListener("keypress", (e) => {
-          if (e.key === "Enter") {
-              kirimPesan();
-          }
-      });
-
-      async function kirimPesan() {
-          const konten = inputPesan.value.trim();
-          if (!konten || !penerimaID) return;
-
-          btnKirim.style.pointerEvents = 'none';
-
-          const { data, error } = await supabase
-            .from("pesan")
-            .insert({
-              pengirim_id: penggunaSekarang.id,
-              penerima_id: penerimaID,
-              konten: konten,
-            })
-            .select()
-            .single();
-
-          btnKirim.style.pointerEvents = 'auto';
-
-          if (!error) {
-              inputPesan.value = "";
-              tampilkanPesan(data);
-              await updateChatPreview(penerimaID);
-          } else {
-              console.error("Gagal mengirim pesan:", error.message);
-          }
-      }
-
-
-      btnKeluar.addEventListener("click", () => {
-        localStorage.removeItem("userId");
-        location.reload();
-      });
-
-      supabase
-        .channel("pesan-realtime")
-        .on(
-          "postgres_changes",
-          {
-            event: "INSERT",
-            schema: "public",
-            table: "pesan",
-          },
-          (payload) => {
-            const p = payload.new;
-            if (
-              (p.penerima_id === penggunaSekarang.id &&
-                p.pengirim_id === penerimaID) ||
-              (p.pengirim_id === penggunaSekarang.id &&
-                p.penerima_id === penerimaID)
-            ) {
-              tampilkanPesan(p);
-            }
-            updateChatPreview(p.pengirim_id === penggunaSekarang.id ? p.penerima_id : p.pengirim_id);
-          }
-        )
-        .subscribe();
-
-      // Event listener untuk toggle sidebar di mobile
-      document.querySelector('.chat-header-main').addEventListener('click', (e) => {
-          // Check if the click is on the pseudo-element (hamburger icon) for sidebar toggle
-          // We need a more robust way to target the ::before pseudo-element with an event listener.
-          // A simpler approach for mobile is to make the entire header clickable, or add a dedicated button.
-          // For now, let's keep the existing logic, assuming the ::before pseudo-element is the target.
-          // If this doesn't work reliably, we might need a visible button instead of ::before.
-          if (window.innerWidth <= 768 && (e.target.classList.contains('chat-header-main') || e.target.closest('.chat-header-main::before'))) {
-              sidebarChat.classList.toggle('show');
-          }
-      });
-
-      // Sembunyikan sidebar saat ukuran layar berubah ke desktop
-      window.addEventListener('resize', () => {
-          if (window.innerWidth > 768) {
-              sidebarChat.classList.remove('show');
-          }
-      });
-
-      // Polling setiap 2 detik dipertahankan seperti permintaan
-      setInterval(() => {
-        if (penerimaID && penggunaSekarang) {
-          muatPesan();
-        }
-      }, 2000);
-    </script>
-  </body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script type="module" src="script.js"></script>
+</body>
 </html>
