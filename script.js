@@ -61,6 +61,7 @@ async function loginWithStoredUser(userId) {
 
   if (data) {
     penggunaSekarang = data;
+    localStorage.setItem("userId", data.id);
     halamanAuth.classList.add("d-none");
     halamanChat.classList.remove("d-none");
     halamanChat.classList.add("d-flex"); // Penting untuk flexbox
@@ -250,7 +251,7 @@ function pilihPenerima(id, nama, liElement) {
   // Atur avatar penerima (misal selalu icon orang jika tidak ada gambar)
   chatPartnerAvatar.innerHTML = `<i class="bi bi-person-fill"></i>`;
 
-  muatPesan();
+  muatPesan(); // Muat pesan awal saat memilih penerima
 
   // Sembunyikan sidebar chat saat di mobile setelah memilih chat
   if (window.innerWidth <= 768) {
@@ -336,8 +337,6 @@ async function kirimPesan() {
 
   if (!error) {
     inputPesan.value = "";
-    tampilkanPesan(data);
-    await updateChatPreview(penerimaID); // Update preview for the active chat
   } else {
     console.error("Gagal mengirim pesan:", error.message);
   }
@@ -368,16 +367,16 @@ supabase
     },
     (payload) => {
       const p = payload.new;
-      // Periksa apakah pesan masuk ditujukan ke pengguna sekarang
-      // atau pesan keluar dari pengguna sekarang ke penerima aktif
+      // Periksa apakah pesan masuk ditujukan ke pengguna sekarang (kita sebagai penerima)
+      // atau pesan keluar dari pengguna sekarang (kita sebagai pengirim) ke penerima aktif
       if (
-        (p.penerima_id === penggunaSekarang.id && p.pengirim_id === penerimaID) ||
-        (p.pengirim_id === penggunaSekarang.id && p.penerima_id === penerimaID)
+        (p.penerima_id === penggunaSekarang.id && p.pengirim_id === penerimaID) || // Pesan diterima dari kontak aktif
+        (p.pengirim_id === penggunaSekarang.id && p.penerima_id === penerimaID)   // Pesan dikirim ke kontak aktif
       ) {
-        tampilkanPesan(p);
+        tampilkanPesan(p); // Tampilkan pesan di kotak pesan utama
       }
-      // Selalu update preview untuk chat yang terkait dengan pesan baru
-      // Ini penting agar preview di sidebar selalu up-to-date
+      // Selalu update preview untuk chat yang terkait dengan pesan baru,
+      // baik itu pesan yang baru diterima atau pesan yang baru dikirim oleh kita.
       updateChatPreview(
         p.pengirim_id === penggunaSekarang.id
           ? p.penerima_id
@@ -442,11 +441,5 @@ function handleResponsiveLayout() {
   }
 }
 
-// Event listener untuk perubahan ukuran jendela
 window.addEventListener("resize", handleResponsiveLayout);
-setInterval(() => {
-  if (penggunaSekarang && penerimaID) {
-    muatPesan();
-    updateChatPreview(penerimaID);
-  }
-}, 2000);
+
