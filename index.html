@@ -2,50 +2,46 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8" />
-  <title>Aplikasi Chat</title>
-  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
+  <title>Aplikasi Chat Real-time</title>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
   <style>
-    .kotak-auth, .kotak-chat {
-      background: #fff; padding: 20px; border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
     .pesan { padding: 10px; border-radius: 10px; margin-bottom: 10px; max-width: 70%; }
     .dikirim { background: #6366f1; color: white; margin-left: auto; }
     .diterima { background: #e5e7eb; margin-right: auto; }
-    #daftar-pengguna li:hover { background: #f3f4f6; cursor: pointer; }
-    #daftar-pengguna li.active { background: #e0e7ff; }
   </style>
 </head>
 <body>
 <div class="container py-5">
-  <div id="halaman-auth" class="kotak-auth mx-auto" style="max-width: 400px;">
-    <h4 class="text-center">Aplikasi Chat</h4>
+  <!-- Halaman Login / Register -->
+  <div id="halaman-auth" style="max-width: 400px;" class="mx-auto">
+    <h4 class="text-center mb-3">Aplikasi Chat</h4>
     <ul class="nav nav-tabs mb-3">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#masuk">Masuk</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#daftar">Daftar</button></li>
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#masuk" type="button">Masuk</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#daftar" type="button">Daftar</button></li>
     </ul>
     <div class="tab-content">
       <div class="tab-pane fade show active" id="masuk">
         <form id="form-login">
-          <input type="email" class="form-control mb-2" id="email-login" placeholder="Email" required />
-          <input type="password" class="form-control mb-3" id="password-login" placeholder="Kata Sandi" required />
-          <button class="btn btn-primary w-100" id="btn-login">Masuk</button>
+          <input type="email" class="form-control mb-2" id="email-login" placeholder="Email" required>
+          <input type="password" class="form-control mb-3" id="password-login" placeholder="Kata Sandi" required>
+          <button type="submit" class="btn btn-primary w-100" id="btn-login">Masuk</button>
         </form>
       </div>
       <div class="tab-pane fade" id="daftar">
         <form id="form-daftar">
-          <input type="text" class="form-control mb-2" id="nama-daftar" placeholder="Nama" required />
-          <input type="email" class="form-control mb-2" id="email-daftar" placeholder="Email" required />
-          <input type="password" class="form-control mb-3" id="password-daftar" placeholder="Kata Sandi" required />
-          <button class="btn btn-success w-100" id="btn-daftar">Daftar</button>
+          <input type="text" class="form-control mb-2" id="nama-daftar" placeholder="Nama" required>
+          <input type="email" class="form-control mb-2" id="email-daftar" placeholder="Email" required>
+          <input type="password" class="form-control mb-3" id="password-daftar" placeholder="Kata Sandi" required>
+          <button type="submit" class="btn btn-success w-100" id="btn-daftar">Daftar</button>
         </form>
       </div>
     </div>
   </div>
 
-  <div id="halaman-chat" class="kotak-chat d-none">
+  <!-- Halaman Chat -->
+  <div id="halaman-chat" class="d-none">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5>Halo, <span id="nama-pengguna"></span></h5>
       <button class="btn btn-danger btn-sm" id="btn-keluar">Keluar</button>
@@ -57,7 +53,7 @@
       <div class="col-md-8">
         <div class="border p-3 mb-2" style="height: 300px; overflow-y: auto;" id="kotak-pesan"></div>
         <div class="input-group">
-          <input type="text" class="form-control" id="input-pesan" placeholder="Tulis pesan..." />
+          <input type="text" class="form-control" id="input-pesan" placeholder="Tulis pesan...">
           <button class="btn btn-primary" id="btn-kirim">Kirim</button>
         </div>
       </div>
@@ -66,122 +62,143 @@
 </div>
 
 <script type="module">
-  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
-  const supabase = createClient('https://feriqnmbfzixgeedmvzw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlcmlxbm1iZnppeGdlZWRtdnp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODY3NTAsImV4cCI6MjA2NjI2Mjc1MH0.POc4TH7fATyb1lsWmMPmUZUww4vaH_5qgGCsD3MsW-E'); // ganti dengan kunci asli
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+const supabase = createClient('https://feriqnmbfzixgeedmvzw.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlcmlxbm1iZnppeGdlZWRtdnp3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTA2ODY3NTAsImV4cCI6MjA2NjI2Mjc1MH0.POc4TH7fATyb1lsWmMPmUZUww4vaH_5qgGCsD3MsW-E'); // ganti dengan kunci asli
 
-  let pengguna = null;
-  let penerimaID = null;
+let pengguna = null;
+let penerimaID = null;
 
-  const namaPengguna = document.getElementById('nama-pengguna');
-  const halamanAuth = document.getElementById('halaman-auth');
-  const halamanChat = document.getElementById('halaman-chat');
-  const daftarPengguna = document.getElementById('daftar-pengguna');
-  const kotakPesan = document.getElementById('kotak-pesan');
-  const inputPesan = document.getElementById('input-pesan');
+const halamanAuth = document.getElementById('halaman-auth');
+const halamanChat = document.getElementById('halaman-chat');
+const namaPengguna = document.getElementById('nama-pengguna');
+const daftarPengguna = document.getElementById('daftar-pengguna');
+const kotakPesan = document.getElementById('kotak-pesan');
+const inputPesan = document.getElementById('input-pesan');
+const btnKirim = document.getElementById('btn-kirim');
+const btnKeluar = document.getElementById('btn-keluar');
 
-  async function hashPassword(password) {
-    const salt = bcrypt.genSaltSync(10);
-    return bcrypt.hashSync(password, salt);
+// ==== REGISTER ====
+document.getElementById('form-daftar').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.submitter;
+  btn.disabled = true;
+  btn.textContent = 'Memproses...';
+
+  const nama = document.getElementById('nama-daftar').value;
+  const email = document.getElementById('email-daftar').value;
+  const password = document.getElementById('password-daftar').value;
+  const hashed = bcrypt.hashSync(password, 10);
+
+  const { error } = await supabase.from('pengguna').insert({ nama, email, password: hashed });
+  if (!error) {
+    alert('Berhasil daftar! Silakan login.');
+    document.querySelector('[data-bs-target="#masuk"]').click();
+  } else {
+    alert('Gagal daftar: ' + error.message);
   }
 
-  async function muatPengguna() {
-    const { data } = await supabase.from('pengguna').select('*').neq('id', pengguna.id);
-    daftarPengguna.innerHTML = '';
-    data.forEach(p => {
-      const li = document.createElement('li');
-      li.className = 'list-group-item';
-      li.textContent = p.nama;
-      li.onclick = () => pilihPenerima(p.id);
-      daftarPengguna.appendChild(li);
-    });
-  }
+  btn.disabled = false;
+  btn.textContent = 'Daftar';
+});
 
-  async function pilihPenerima(id) {
-    penerimaID = id;
+// ==== LOGIN ====
+document.getElementById('form-login').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = document.getElementById('email-login').value;
+  const password = document.getElementById('password-login').value;
+
+  const { data: userList, error } = await supabase.from('pengguna').select('*').eq('email', email).limit(1);
+  const user = userList?.[0];
+
+  if (user && bcrypt.compareSync(password, user.password)) {
+    pengguna = user;
+    namaPengguna.textContent = pengguna.nama;
+    halamanAuth.classList.add('d-none');
+    halamanChat.classList.remove('d-none');
+    muatPengguna();
     muatPesan();
+    setupRealtime();
+  } else {
+    alert('Login gagal! Email atau sandi salah.');
   }
+});
 
-  async function muatPesan() {
-    const { data } = await supabase.from('pesan')
-      .select('*')
-      .or(`pengirim_id.eq.${pengguna.id},penerima_id.eq.${pengguna.id}`)
-      .order('dibuat_pada', { ascending: true });
+// ==== KELUAR ====
+btnKeluar.addEventListener('click', () => location.reload());
 
-    kotakPesan.innerHTML = '';
-    data.forEach(p => {
+// ==== MUAT PENGGUNA ====
+async function muatPengguna() {
+  const { data } = await supabase.from('pengguna').select('*').neq('id', pengguna.id);
+  daftarPengguna.innerHTML = '';
+  data.forEach(p => {
+    const li = document.createElement('li');
+    li.className = 'list-group-item';
+    li.textContent = p.nama;
+    li.onclick = () => {
+      penerimaID = p.id;
+      document.querySelectorAll('#daftar-pengguna li').forEach(li => li.classList.remove('active'));
+      li.classList.add('active');
+      muatPesan();
+    };
+    daftarPengguna.appendChild(li);
+  });
+}
+
+// ==== MUAT PESAN ====
+async function muatPesan() {
+  const { data } = await supabase
+    .from('pesan')
+    .select('*')
+    .or(`pengirim_id.eq.${pengguna.id},penerima_id.eq.${pengguna.id}`)
+    .order('dibuat_pada', { ascending: true });
+
+  kotakPesan.innerHTML = '';
+  data.forEach(p => {
+    if ((p.pengirim_id === pengguna.id && p.penerima_id === penerimaID) ||
+        (p.penerima_id === pengguna.id && p.pengirim_id === penerimaID)) {
+      const div = document.createElement('div');
+      div.className = 'pesan ' + (p.pengirim_id === pengguna.id ? 'dikirim' : 'diterima');
+      div.textContent = p.konten;
+      kotakPesan.appendChild(div);
+    }
+  });
+  kotakPesan.scrollTop = kotakPesan.scrollHeight;
+}
+
+// ==== KIRIM PESAN ====
+btnKirim.addEventListener('click', async () => {
+  const konten = inputPesan.value.trim();
+  if (!konten || !penerimaID) return;
+
+  await supabase.from('pesan').insert({
+    pengirim_id: pengguna.id,
+    penerima_id: penerimaID,
+    konten
+  });
+  inputPesan.value = '';
+});
+
+// ==== REALTIME ====
+function setupRealtime() {
+  supabase
+    .channel('pesan-realtime')
+    .on('postgres_changes', {
+      event: 'INSERT',
+      schema: 'public',
+      table: 'pesan'
+    }, payload => {
+      const p = payload.new;
       if ((p.pengirim_id === pengguna.id && p.penerima_id === penerimaID) ||
           (p.penerima_id === pengguna.id && p.pengirim_id === penerimaID)) {
         const div = document.createElement('div');
         div.className = 'pesan ' + (p.pengirim_id === pengguna.id ? 'dikirim' : 'diterima');
         div.textContent = p.konten;
         kotakPesan.appendChild(div);
+        kotakPesan.scrollTop = kotakPesan.scrollHeight;
       }
-    });
-    kotakPesan.scrollTop = kotakPesan.scrollHeight;
-  }
-
-  document.getElementById('form-daftar').addEventListener('submit', async e => {
-    e.preventDefault();
-    const nama = document.getElementById('nama-daftar').value;
-    const email = document.getElementById('email-daftar').value;
-    const password = document.getElementById('password-daftar').value;
-    const hashed = await hashPassword(password);
-
-    const { error } = await supabase.from('pengguna').insert({ nama, email, password: hashed });
-    if (!error) {
-      alert('Berhasil daftar! Silakan login.');
-      document.querySelector('[data-bs-target="#masuk"]').click();
-    } else {
-      alert(error.message);
-    }
-  });
-
-  document.getElementById('form-login').addEventListener('submit', async e => {
-    e.preventDefault();
-    const email = document.getElementById('email-login').value;
-    const password = document.getElementById('password-login').value;
-
-    const { data, error } = await supabase.from('pengguna').select('*').eq('email', email).single();
-    if (!data) return alert('Email tidak ditemukan.');
-    const cocok = bcrypt.compareSync(password, data.password);
-    if (!cocok) return alert('Password salah.');
-
-    pengguna = data;
-    namaPengguna.textContent = pengguna.nama;
-    localStorage.setItem('pengguna_id', pengguna.id);
-    halamanAuth.classList.add('d-none');
-    halamanChat.classList.remove('d-none');
-    await muatPengguna();
-  });
-
-  document.getElementById('btn-kirim').addEventListener('click', async () => {
-    const teks = inputPesan.value.trim();
-    if (!teks || !penerimaID) return;
-    await supabase.from('pesan').insert({
-      pengirim_id: pengguna.id,
-      penerima_id: penerimaID,
-      konten: teks
-    });
-    inputPesan.value = '';
-    muatPesan();
-  });
-
-  document.getElementById('btn-keluar').addEventListener('click', () => {
-    localStorage.clear();
-    location.reload();
-  });
-
-  // Cek login sebelumnya
-  const idSimpan = localStorage.getItem('pengguna_id');
-  if (idSimpan) {
-    supabase.from('pengguna').select('*').eq('id', idSimpan).single().then(({ data }) => {
-      pengguna = data;
-      namaPengguna.textContent = pengguna.nama;
-      halamanAuth.classList.add('d-none');
-      halamanChat.classList.remove('d-none');
-      muatPengguna();
-    });
-  }
+    })
+    .subscribe();
+}
 </script>
 </body>
 </html>
